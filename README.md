@@ -5,7 +5,7 @@ Continuous integration (CI)
 ```
 var ci = require('ci');
 
-var app = new ci.bitci(
+var app = new ci.init(
 	{ 
 		configuration: 	'your_app_configuration',
 		publishProfile:	'your_app_publish_profile',
@@ -14,10 +14,9 @@ var app = new ci.bitci(
 	}
 );
 
-ci.queue.add(app.pull);
-ci.queue.add(app.build);
-ci.queue.add(app.publish);
+ci.next(app.pull);
+ci.next(app.build);
+ci.next(app.publish);
 
-ci.queue.process();
-console.log('starting\n\n');
+ci.start();
 ```

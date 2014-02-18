@@ -17,8 +17,7 @@ var queue = function(){
 		setTimeout(function(){ arg(callback);},0);
 	}
 	function _asyncCallback(result) {
-				console.log('asyncCallback called');
-				_process();
+		_process();
 	}
 	function _process(){
 		var item = stack.shift();
