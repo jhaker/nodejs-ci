@@ -1,40 +1,67 @@
-var queue = require('./queue'),
-	msbuild = require('msbuild'),
-	gitwin = require('gitwin');
+	var queue = require('./queue'),
+		msbuild = require('msbuild'),
+		gitwin = require('gitwin');
 	
-var ci = function(){
-	this.queue = queue;
-	this.gitwin = gitwin;
-	this.msbuild = msbuild;
+var ci = function(verbose){
+	var verbose = true;
 	
 	this.next = function(task){
-		this.queue.add(task);
+		queue.add(task);
 	}
 	
 	this.start = function(){
 		console.log('reading queue\n\n');
-		this.queue.process();
+		queue.process();
 	}
 	
 	this.init = function(config){
-		this.publish = function(callback){ 
+		var verbose = false;
+		if(config){
+			if(config.verbose === false) {
+				verbose = false;
+			}
+			else{
+				verbose = true;
+			}
+		}
+		else{
+			console.log('');
+			console.log('error: configuration missing');
+			console.log('example');
+			var exampleConfig =  { 
+        configuration:     'your_app_configuration',
+        publishProfile:    'your_app_publish_profile',
+        sourcePath:        'c:/your_app_path/your_app.sln',
+        watchPath :          'c:/your_app_path'
+			};
+			console.log(JSON.stringify(exampleConfig));
+			console.log('');
+		}
+		
+		var _publish = function(callback){ 
+			console.log('publish called '+config.configuration+ ' ' +config.publishProfile);
 			var _msbuild = new msbuild(callback);
 			_msbuild.setConfig(config);		
-			_msbuild.verbose = false;
+			_msbuild.verbose = verbose;
 			_msbuild.publish();
 		 };
-		this.build = function(callback){
+		var _build = function(callback){
+			console.log(verbose);
+			console.log('build called '+config.configuration+ ' ' +config.publishProfile);
 			var _msbuild = new msbuild(callback);
 			_msbuild.setConfig(config);		
-			_msbuild.verbose = false;
+			_msbuild.verbose = verbose;
 			_msbuild.build();
 		 };
-		this.pull =  function(callback){
+		var _pull =  function(callback){
+			console.log('pull called '+config.configuration+ ' ' +config.publishProfile);
 			var _gitwin = new gitwin(callback);
 			_gitwin.path = (config.watchPath);
-			_gitwin.verbose = true;
+			_gitwin.verbose = verbose;
 			_gitwin.pull();
 		};
+		
+		return {build:_build,publish:_publish,pull:_pull};
 	};
 }
 
