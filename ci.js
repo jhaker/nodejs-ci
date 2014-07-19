@@ -10,7 +10,6 @@ var ci = function(verbose){
 	}
 	
 	this.start = function(){
-		console.log('reading queue\n\n');
 		queue.process();
 	}
 	
@@ -38,23 +37,27 @@ var ci = function(verbose){
 			console.log('');
 		}
 		
+		var _write = function(action){
+			var prefixJson = '\n          ';
+			console.log('  '+action+'   '+prefixJson+'configuration:"'+config.configuration+ '",'+prefixJson+'publishProfile:"' +config.publishProfile+'",'+prefixJson+'sourcePath:"'+config.sourcePath+'"'+prefixJson+'');
+		}
+		
 		var _publish = function(callback){ 
-			console.log('publish called '+config.configuration+ ' ' +config.publishProfile);
+			_write('publish');
 			var _msbuild = new msbuild(callback);
 			_msbuild.setConfig(config);		
 			_msbuild.verbose = verbose;
 			_msbuild.publish();
 		 };
 		var _build = function(callback){
-			console.log(verbose);
-			console.log('build called '+config.configuration+ ' ' +config.publishProfile);
+			_write('build');
 			var _msbuild = new msbuild(callback);
 			_msbuild.setConfig(config);		
 			_msbuild.verbose = verbose;
 			_msbuild.build();
 		 };
 		var _pull =  function(callback){
-			console.log('pull called '+config.configuration+ ' ' +config.publishProfile);
+			_write('pull');
 			var _gitwin = new gitwin(callback);
 			_gitwin.path = (config.watchPath);
 			_gitwin.verbose = verbose;
