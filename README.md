@@ -1,5 +1,5 @@
 # ci
-Continuous integration (CI)
+Continuous Integration
 
 ### example
 ```
